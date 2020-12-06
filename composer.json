@@ -1,0 +1,22 @@
+{
+    "name": "hahadu/express",
+    "description": "快递公司接口api",
+    "type": "library",
+    "require": {
+        "php": ">=7.1",
+        "hahadu/helper-function": ">=0.7.0"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "hahadu",
+            "email": "582167246@qq.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Hahadu\\Express\\": "src/"
+        }
+    },
+        "minimum-stability": "dev"
+}
