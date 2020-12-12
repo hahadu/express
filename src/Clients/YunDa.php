@@ -1,15 +1,15 @@
 <?php
 
-namespace Hahadu\Express;
+namespace Hahadu\Express\Clients;
 
-use Hahadu\Helper\JsonHelper;
 use Hahadu\Helper\StringHelper;
-use think\facade\Config;
 use Hahadu\Helper\HttpHelper;
 use Hahadu\Helper\XMLHelper;
+use think\response\Json;
+use Hahadu\Express\Builds\BuildMessage;
 
 
-class YunDaApi
+class YunDa
 {
     protected $api_dir = 'baima-api/api/public';
     protected $api_url = 'pub_order/index';
@@ -73,6 +73,7 @@ class YunDaApi
     /******
      * 订单查询接口
      * 订单状态    说明
+     * @return
      * accept    接单成功
      * withdraw  订单已取消
      * create    订单创建
@@ -120,7 +121,7 @@ class YunDaApi
         }
         $response = $this->request_yunda($data, $request);
 
-        if ($response['0']) {
+        if (is_array($response)) {
             $result = [];
             foreach ($response as $key => $v) {
                 $result[$key] = [
@@ -132,13 +133,7 @@ class YunDaApi
                 ];
             }
         } else {
-            $result = [
-                'order_no' => $response->order_serial_no,
-                'express_no' => $response->mail_no,
-                'express_no_info' => $response->pdf_info,
-                'code' => $response->status,
-                'message' => $response->msg,
-            ];
+            $result[] = BuildMessage::build_express_no($response->order_serial_no,$response->mail_no,$response->pdf_info,$response->status,$response->msg);
         }
         return $result;
     }
@@ -205,7 +200,7 @@ class YunDaApi
     }
 
     /****
-     * 检查订单item信息是否有误
+     * 检查订单item信息
      * @param $data
      * @param string $item
      * @return bool
@@ -224,17 +219,17 @@ class YunDaApi
      * @return string
      */
     protected function create_serial_no(){
-        $no = StringHelper::create_rand_string(9, '0123456789');
-        return  'YDNO' . date('YmdHis') . $no;
+        $no = StringHelper::create_rand_string(6, '0123456789');
+        return  'YD' . date('YmdHis') . $no;
     }
 
     /**
      * order_type
-     * @return array
+     * @return array|Json
      */
     public function order_type()
     {
-        return [
+        $type = [
             ['type' => 'common', 'name' => '普通'],
             ['type' => 'insured', 'name' => '保价'],
             ['type' => 'cod', 'name' => '代收货款'],
@@ -243,6 +238,7 @@ class YunDaApi
             ['type' => 'df', 'name' => '到付'],
             ['type' => 'present', 'name' => '礼品'],
         ];
+        return json($type);
     }
 
 }
