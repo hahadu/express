@@ -97,12 +97,12 @@ class YunDa
         $response = $this->request_yunda([$data], $request);
 
         return [
-            'code'=>$response->status,
-            'order_serial_no'=>$response->order_serial_no ,
-            'express_no'=>$response->mailno,
-            'express_no_info'=>$response->json_data,
-            'order_status'=>$response->order_status,
-            'message'=>$response->msg,
+            'code'=>isset($response->status)?$response->status : '',
+            'order_serial_no'=>isset($response->order_serial_no) ? $response->order_serial_no : '',
+            'express_no'=>isset($response->mailno) ? $response->mailno : '',
+            'express_no_info'=>isset($response->json_data)?$response->json_data:'',
+            'order_status'=>isset($response->order_status)?$response->order_status:'',
+            'message'=>isset($response->msg)?$response->msg:'',
         ];
     }
 
