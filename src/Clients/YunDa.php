@@ -56,14 +56,17 @@ class YunDa
     }
 
     /*****
-     * 取消订单
+     * 取消订单 ,订单号/快递单号必须2选1
      * @param string $order_serial_no 唯一订单号
-     * @param string $mail_no 运单号|可选
+     * @param string|numeric $mail_no 运单号|可选
      * @return mixed
      */
     public function cancelOrder($order_serial_no,$mail_no=''){
         $request = 'cancelOrder';
-        $data['order_serial_no'] = $order_serial_no;
+        $data = [];
+        if($order_serial_no){
+            $data['order_serial_no'] = $order_serial_no;
+        }
         if($mail_no) {
             $data['mail_no'] = $mail_no;
         }
@@ -133,7 +136,13 @@ class YunDa
                 ];
             }
         } else {
-            $result[] = BuildMessage::build_express_no($response->order_serial_no,$response->mail_no,$response->pdf_info,$response->status,$response->msg);
+            $result[] = BuildMessage::build_express_no(
+                $response->order_serial_no,
+                $response->mail_no,
+                $response->pdf_info,
+                $response->status,
+                $response->msg
+            );
         }
         return $result;
     }
